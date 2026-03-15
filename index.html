@@ -239,7 +239,7 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
   <img id="resultImg" alt="Image composite"/>
   <div class="result-btns">
     <button class="btn btn-outline" onclick="downloadComposite()">⬇️ Télécharger l'image</button>
-    <button class="btn btn-outline" id="btnExportVideo" onclick="exportVideo()">🎞 Exporter le time lapse</button>
+    <button class="btn btn-outline" id="btnExportVideo" onclick="exportVideo()" style="display:none">🎞 Exporter le time lapse</button>
     <button class="btn btn-primary" onclick="restart()">🔄 Recommencer</button>
   </div>
   <div id="statusMsg2"></div>
@@ -251,6 +251,8 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
 let cfg = {y:24, x:1800};        // x in seconds (float ok)
 let slitMode = true;              // ON by default
 let camFacing = 'environment';    // 'user' | 'environment'
+let videoExportEnabled = false;   // désactivé temporairement
+let wakeLock = null;
 let orientForced = 'auto', orientDetected = 'landscape';
 let sweepDir = 'ltr';
 let compositeCanvas=null, stream=null, isCapturing=false;
@@ -472,6 +474,19 @@ function sliceRect(ci, n, W, H, eff){
   }
 }
 
+async function acquireWakeLock(){
+  if('wakeLock' in navigator){
+    try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){console.warn('WakeLock refusé:',e);}
+  }
+}
+async function releaseWakeLock(){
+  if(wakeLock){try{await wakeLock.release();}catch(e){} wakeLock=null;}
+}
+// Re-acquérir si l'onglet revient au premier plan
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible'&&isCapturing) await acquireWakeLock();
+});
+
 async function startCapture(){
   captureCount=0; videoFrameCanvases=[];
   const constraints={video:{facingMode:camFacing, width:{ideal:4096}, height:{ideal:2160}}, audio:false};
@@ -507,8 +522,11 @@ async function startCapture(){
   compositeCanvas.width=vw; compositeCanvas.height=vh;
   const ctx=compositeCanvas.getContext('2d');
   ctx.fillStyle='#111'; ctx.fillRect(0,0,vw,vh);
-  isCapturing=true; runCapture();
+  isCapturing=true;
+  await acquireWakeLock();
+  runCapture();
 }
+
 
 function runCapture(){
   if(!isCapturing)return;
@@ -583,7 +601,7 @@ function finishCapture(){
     (slitMode?(isPure?' · slit pur 1px':` · ${slit.colPx}px/col`):'');
   compositeCanvas=final; showScreen('s-result');
 }
-function stopStream(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+function stopStream(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;} releaseWakeLock();}
 
 function downloadComposite(){
   const a=document.createElement('a');
