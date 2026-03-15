@@ -4,8 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <meta name="theme-color" content="#0f0f0f"/>
-  <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <title>TimeLapse Slicer</title>
@@ -14,16 +12,13 @@
 :root{--accent:#00e5ff;--bg:#0f0f0f;--card:#1a1a1a;--card2:#242424;--text:#f0f0f0;--muted:#666;--err:#ff3b5c;--gold:#ffd060}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh}
 #app{max-width:440px;margin:0 auto;padding:14px;padding-bottom:40px}
-
 h1{text-align:center;font-size:1.3rem;letter-spacing:.12em;color:var(--accent);margin-bottom:2px}
 .sub{text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:18px}
 
-/* ── cards ── */
 .card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px}
 .card.gold-border{border:1.5px solid #5a4a00}
 .card-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px}
 
-/* ── param rows ── */
 .prow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;margin-bottom:12px}
 .prow:last-child{margin-bottom:0}
 .plabel{font-size:.78rem;color:var(--muted);grid-column:1}
@@ -33,17 +28,14 @@ input[type=range]{flex:1;-webkit-appearance:none;height:3px;border-radius:3px;ba
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 6px rgba(0,229,255,.4)}
 input[type=number]{width:72px;background:#222;border:1.5px solid #333;border-radius:8px;color:var(--text);font-size:.88rem;padding:5px 6px;text-align:center;outline:none;-moz-appearance:textfield}
 input[type=number]:focus{border-color:var(--accent)}
-input[type=number]:disabled{color:#444;border-color:#222;background:#161616}
-input[type=range]:disabled{opacity:.25}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 .unit{color:var(--muted);font-size:.75rem;min-width:24px}
 .divider{border:none;border-top:1px solid #222;margin:12px 0}
-/* z special: h m s */
 .z-fields{display:flex;gap:6px;align-items:center;flex:1}
 .z-fields input{width:52px}
 .z-sep{color:var(--muted);font-size:.8rem}
 
-/* ── slit toggle ── */
+/* slit */
 .slit-row{display:flex;align-items:center;gap:12px}
 .toggle-wrap{position:relative;width:44px;height:24px;flex-shrink:0}
 .toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
@@ -54,14 +46,23 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .slit-texts{line-height:1.35}
 .slit-texts b{color:var(--gold);font-size:.88rem}
 .slit-texts small{color:var(--muted);font-size:.72rem}
-.slit-details{background:#141000;border:1px solid #3a2e00;border-radius:10px;padding:12px;margin-top:10px;display:none}
-.slit-details.vis{display:block}
-.slit-details .sd-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.slit-details .sd-row input{width:90px}
-.slit-result{font-size:.78rem;color:#bbb;line-height:1.8}
+.slit-badge{display:inline-block;font-size:.68rem;padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle;font-weight:700}
+.slit-badge.on{background:#3a2e00;color:var(--gold)}
+.slit-badge.multi{background:#0a2a30;color:var(--accent)}
+.slit-details{background:#141000;border:1px solid #3a2e00;border-radius:10px;padding:12px;margin-top:10px}
+.slit-result{font-size:.78rem;color:#bbb;line-height:1.9}
 .slit-result b{color:var(--gold)}
+.slit-result .info{color:var(--accent)}
 
-/* ── orient & direction ── */
+/* manual controls — hidden in slit mode */
+#manualControls{overflow:hidden;transition:max-height .3s ease, opacity .3s ease}
+
+/* camera selector */
+.cam-group{display:flex;gap:6px}
+.cam-btn{flex:1;padding:9px 6px;border:1.5px solid #2a2a2a;border-radius:9px;background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;text-align:center;transition:.15s}
+.cam-btn.active{border-color:var(--accent);color:var(--accent);background:#061418}
+
+/* orient & direction */
 .seg-group{display:flex;gap:6px;margin-bottom:8px}
 .seg{flex:1;padding:8px 6px;border:1.5px solid #2a2a2a;border-radius:9px;background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;text-align:center;line-height:1.35;transition:.15s}
 .seg small{display:block;font-size:.65rem;margin-top:1px;opacity:.7}
@@ -72,8 +73,6 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .tag{font-size:.65rem;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle}
 .tag.auto{background:#0a2a30;color:var(--accent)}
 .tag.forced{background:#3a2e00;color:var(--gold)}
-
-/* direction: big arrow buttons */
 .dir-group{display:flex;gap:8px}
 .dir-btn{flex:1;padding:10px;border:1.5px solid #2a2a2a;border-radius:9px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
 .dir-btn.active{border-color:var(--accent);background:#061418}
@@ -82,17 +81,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .dir-label{font-size:.72rem;color:var(--muted);line-height:1.3;text-align:left}
 .dir-btn.active .dir-label{color:var(--accent)}
 
-/* ── summary ── */
 .summary{background:#111;border:1px solid #222;border-radius:12px;padding:13px 16px;text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.8}
 .summary b{color:var(--text)}
-.summary .warn{color:var(--err);font-size:.74rem}
-
 .btn{width:100%;padding:15px;border:none;border-radius:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.18s}
 .btn-primary{background:var(--accent);color:#000}
 .btn-primary:disabled{background:#1e1e1e;color:#444;cursor:not-allowed}
 .btn-danger{background:#ff3b5c;color:#fff}
 .btn-outline{background:transparent;border:2px solid var(--accent);color:var(--accent);margin-bottom:8px}
-
 .screen{display:none}.screen.active{display:block}
 #videoWrap{position:relative;border-radius:14px;overflow:hidden;background:#000;margin-bottom:12px}
 video{width:100%;display:block;max-height:52vw;object-fit:cover}
@@ -113,40 +108,16 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
 <body>
 <div id="app">
 
-<!-- ══ SCREEN CONFIG ══ -->
+<!-- ══ CONFIG ══ -->
 <div id="s-config" class="screen active">
   <h1>⏱ TimeLapse Slicer</h1>
   <p class="sub">Composez le temps en une seule image</p>
 
-  <!-- 1 · RÉGLAGES -->
+  <!-- 1 · DURÉE + réglages manuels -->
   <div class="card">
     <div class="card-title">Réglages</div>
 
-    <!-- Y -->
-    <div class="prow">
-      <span class="plabel">📷 Nombre de photos</span>
-      <span class="pval" id="lY">—</span>
-      <div class="pcontrols">
-        <input type="range" id="rY" min="4" max="120" value="24" step="1" oninput="onYSlider()">
-        <input type="number" id="nY" min="2" max="9999" value="24" oninput="onYInput()">
-        <span class="unit">ph.</span>
-      </div>
-    </div>
-    <div class="divider"></div>
-
-    <!-- X -->
-    <div class="prow">
-      <span class="plabel">⏳ Intervalle</span>
-      <span class="pval" id="lX">—</span>
-      <div class="pcontrols">
-        <input type="range" id="rX" min="1" max="3600" value="1800" step="1" oninput="onXSlider()">
-        <input type="number" id="nX" min="1" max="999999" value="1800" oninput="onXInput()">
-        <span class="unit">sec</span>
-      </div>
-    </div>
-    <div class="divider"></div>
-
-    <!-- Z -->
+    <!-- Z : durée totale — toujours visible -->
     <div class="prow">
       <span class="plabel">🕐 Durée totale</span>
       <span class="pval" id="lZ">—</span>
@@ -161,45 +132,69 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
           <span class="z-sep">s</span>
         </div>
       </div>
-      <div style="grid-column:1/-1;font-size:.68rem;color:var(--muted);margin-top:2px">Modifier z recalcule l'intervalle x</div>
+    </div>
+
+    <!-- Manual controls: Y + X, masqués en mode slit -->
+    <div id="manualControls">
+      <div class="divider"></div>
+      <div class="prow">
+        <span class="plabel">📷 Nombre de photos</span>
+        <span class="pval" id="lY">—</span>
+        <div class="pcontrols">
+          <input type="range" id="rY" min="4" max="120" value="24" step="1" oninput="onYSlider()">
+          <input type="number" id="nY" min="2" max="9999" value="24" oninput="onYInput()">
+          <span class="unit">ph.</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="prow">
+        <span class="plabel">⏳ Intervalle</span>
+        <span class="pval" id="lX">—</span>
+        <div class="pcontrols">
+          <input type="range" id="rX" min="1" max="3600" value="1800" step="1" oninput="onXSlider()">
+          <input type="number" id="nX" min="1" max="999999" value="1800" oninput="onXInput()">
+          <span class="unit">sec</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- 2 · SLIT-SCAN -->
-  <div class="card" id="slitCard">
+  <!-- 2 · SLIT-SCAN (défaut ON) -->
+  <div class="card gold-border" id="slitCard">
     <div class="card-title">Mode slit-scan</div>
     <div class="slit-row">
       <label class="toggle-wrap">
-        <input type="checkbox" id="chkSlit" onchange="onSlitToggle()">
+        <input type="checkbox" id="chkSlit" checked onchange="onSlitToggle()">
         <div class="toggle-track"></div>
       </label>
       <div class="slit-texts">
-        <b>Slit-scan 1 px</b><br>
-        <small>y et x calculés depuis la largeur du capteur</small>
+        <b>Slit-scan</b><span class="slit-badge" id="slitBadge"></span><br>
+        <small id="slitSubtitle"></small>
       </div>
     </div>
     <div class="slit-details" id="slitInfo">
-      <div class="sd-row">
-        <span style="font-size:.78rem;color:var(--muted)">Largeur capteur :</span>
-        <input type="number" id="nPx" min="1" max="20000" value="1920" oninput="onSlitPxInput()">
-        <span class="unit">px</span>
-        <span style="font-size:.7rem;color:var(--muted)">ex : 1920, 6000…</span>
-      </div>
       <div class="slit-result" id="slitCalc"></div>
     </div>
   </div>
 
-  <!-- 3 · ORIENTATION & DIRECTION -->
+  <!-- 3 · CAMÉRA -->
+  <div class="card">
+    <div class="card-title">Caméra</div>
+    <div class="cam-group">
+      <button class="cam-btn" id="camFront" onclick="setCam('user')">🤳 Avant</button>
+      <button class="cam-btn active" id="camBack"  onclick="setCam('environment')">📷 Arrière</button>
+    </div>
+  </div>
+
+  <!-- 4 · ORIENTATION & DIRECTION -->
   <div class="card">
     <div class="card-title">Orientation & sens du balayage</div>
-
     <div class="seg-group">
       <button class="seg" id="btnLandscape" onclick="forceOrient('landscape')">🖼 Paysage<small>colonnes verticales</small></button>
       <button class="seg" id="btnPortrait"  onclick="forceOrient('portrait')">🖹 Portrait<small>colonnes horiz.</small></button>
       <button class="seg active" id="btnAuto" onclick="forceOrient('auto')">🔄 Auto</button>
     </div>
     <div class="orient-status" id="orientStatus"></div>
-
     <div class="divider"></div>
     <div style="font-size:.7rem;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em">Sens du balayage</div>
     <div class="dir-group">
@@ -214,12 +209,12 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
     </div>
   </div>
 
-  <!-- 4 · SYNTHÈSE -->
+  <!-- 5 · SYNTHÈSE -->
   <div class="summary" id="summary"></div>
   <button class="btn btn-primary" id="btnStart" onclick="startCapture()">🎬 Démarrer la capture</button>
 </div>
 
-<!-- ══ SCREEN CAPTURE ══ -->
+<!-- ══ CAPTURE ══ -->
 <div id="s-capture" class="screen">
   <h1>📸 Capture en cours</h1>
   <p class="sub" id="captureTitle"></p>
@@ -237,7 +232,7 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
   <div id="statusMsg"></div>
 </div>
 
-<!-- ══ SCREEN RESULT ══ -->
+<!-- ══ RÉSULTAT ══ -->
 <div id="s-result" class="screen">
   <h1>✅ Résultat</h1>
   <p class="sub" id="resultSub"></p>
@@ -253,12 +248,16 @@ video{width:100%;display:block;max-height:52vw;object-fit:cover}
 </div>
 <script>
 // ── state ──
-let cfg={y:24,x:1800};
-let slitMode=false,slitPx=1920;
-let orientForced='auto',orientDetected='landscape';
-let sweepDir='ltr';
-let compositeCanvas=null,stream=null,isCapturing=false;
-let captureCount=0,videoFrameCanvases=[];
+let cfg = {y:24, x:1800};        // x in seconds (float ok)
+let slitMode = true;              // ON by default
+let camFacing = 'environment';    // 'user' | 'environment'
+let orientForced = 'auto', orientDetected = 'landscape';
+let sweepDir = 'ltr';
+let compositeCanvas=null, stream=null, isCapturing=false;
+let captureCount=0, videoFrameCanvases=[];
+
+// resolved slit params (computed in computeSlit)
+let slit = {colPx:1, photosPerCol:1, totalPhotos:0, intervalSec:0};
 
 // ── helpers ──
 function fmtSec(s){
@@ -278,57 +277,119 @@ function zTotal(){
 function effectiveOrient(){return orientForced==='auto'?orientDetected:orientForced;}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
-// ── orient detection ──
+// ── orientation ──
 function detectOrient(){
-  orientDetected=window.innerWidth>=window.innerHeight?'landscape':'portrait';
+  orientDetected = window.innerWidth>=window.innerHeight?'landscape':'portrait';
   updateOrientUI();
 }
 function updateOrientUI(){
-  const eff=effectiveOrient(),forced=orientForced!=='auto';
-  document.getElementById('btnAuto').className      ='seg'+((!forced)?' active':'');
-  document.getElementById('btnLandscape').className ='seg'+(forced&&orientForced==='landscape'?' forced':'');
-  document.getElementById('btnPortrait').className  ='seg'+(forced&&orientForced==='portrait'?' forced':'');
+  const eff=effectiveOrient(), forced=orientForced!=='auto';
+  document.getElementById('btnAuto').className      = 'seg'+((!forced)?' active':'');
+  document.getElementById('btnLandscape').className = 'seg'+(forced&&orientForced==='landscape'?' forced':'');
+  document.getElementById('btnPortrait').className  = 'seg'+(forced&&orientForced==='portrait'?' forced':'');
   if(!forced) document.getElementById('btn'+cap(orientDetected)).classList.add('active');
   const isLand=eff==='landscape';
   document.getElementById('orientStatus').innerHTML=
     `Mode actif : <b>${isLand?'🖼 Paysage — colonnes verticales':'🖹 Portrait — colonnes horizontales'}</b>`+
     `<span class="tag ${forced?'forced':'auto'}">${forced?'⚡ forcé':'🔄 auto'}</span>`;
+  updateSummary();
 }
-function forceOrient(v){orientForced=v;updateOrientUI();if(slitMode)computeSlit();}
-window.addEventListener('resize',()=>{detectOrient();if(slitMode)computeSlit();});
-window.addEventListener('orientationchange',()=>{setTimeout(()=>{detectOrient();if(slitMode)computeSlit();},300);});
+function forceOrient(v){orientForced=v; updateOrientUI(); computeSlit();}
+window.addEventListener('resize',()=>{detectOrient(); computeSlit();});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{detectOrient(); computeSlit();},300);});
 detectOrient();
+
+// ── camera ──
+function setCam(facing){
+  camFacing=facing;
+  document.getElementById('camFront').className='cam-btn'+(facing==='user'?' active':'');
+  document.getElementById('camBack').className ='cam-btn'+(facing==='environment'?' active':'');
+}
 
 // ── direction ──
 function setDir(d){
   sweepDir=d;
   document.getElementById('btnLR').className='dir-btn'+(d==='ltr'?' active':'');
   document.getElementById('btnRL').className='dir-btn'+(d==='rtl'?' active':'');
-  updateSummary(cfg.y*cfg.x);
+  updateSummary();
 }
 
-// ── slit-scan ──
-function onSlitToggle(){
-  slitMode=document.getElementById('chkSlit').checked;
-  document.getElementById('slitInfo').classList.toggle('vis',slitMode);
-  document.getElementById('slitCard').classList.toggle('gold-border',slitMode);
-  ['rY','nY','rX','nX'].forEach(id=>document.getElementById(id).disabled=slitMode);
-  if(slitMode)computeSlit();else syncInputs();
+// ── SLIT COMPUTE ──
+// sensorPx : largeur (ou hauteur en portrait) du capteur en pixels
+// z        : durée totale en secondes
+// règle : intervalle minimum = 1s
+// si z/sensorPx >= 1s → 1 photo par colonne, 1 colonne = 1px  (slit pur)
+// sinon               → regroupe plusieurs px par colonne pour que l'intervalle = 1s
+function computeSlitParams(sensorPx, z){
+  const minInterval = 1; // seconde
+  const rawInterval = z / sensorPx;
+  if(rawInterval >= minInterval){
+    // cas idéal : 1 px / colonne
+    return {colPx:1, photosPerCol:1, totalPhotos:sensorPx, intervalSec:rawInterval};
+  } else {
+    // regroupement : combien de px par colonne pour atteindre 1s ?
+    const colPx = Math.ceil(minInterval / rawInterval);
+    const totalPhotos = Math.ceil(sensorPx / colPx);
+    const intervalSec = z / totalPhotos;
+    return {colPx, photosPerCol:1, totalPhotos, intervalSec};
+  }
 }
-function onSlitPxInput(){slitPx=parseInt(document.getElementById('nPx').value)||1920;computeSlit();}
+
+// sensorPx courant (mis à jour au démarrage depuis la vraie caméra, sinon depuis nPx stocké)
+let sensorPx = 1920;
+
 function computeSlit(){
+  if(!slitMode){updateSummary();return;}
   const z=zTotal();
-  if(z<1){document.getElementById('slitCalc').innerHTML='<span style="color:var(--err)">Définissez d\'abord une durée totale z.</span>';return;}
-  cfg.y=slitPx;cfg.x=z/slitPx;
-  document.getElementById('slitCalc').innerHTML=
-    `<b>${slitPx.toLocaleString()} photos</b> (= ${slitPx.toLocaleString()} px)<br>`+
-    `Intervalle : <b>${fmtMs(cfg.x)}</b>/colonne — Total : <b>${fmtSec(z)}</b>`;
-  updateSummary(z);
+  if(z<1){
+    document.getElementById('slitCalc').innerHTML='<span style="color:var(--err)">Définissez d\'abord une durée totale.</span>';
+    return;
+  }
+  slit = computeSlitParams(sensorPx, z);
+  cfg.y = slit.totalPhotos;
+  cfg.x = slit.intervalSec;
+
+  const isPure = slit.colPx===1;
+  document.getElementById('slitBadge').textContent   = isPure ? '1 px' : `${slit.colPx} px/col`;
+  document.getElementById('slitBadge').className     = 'slit-badge '+(isPure?'on':'multi');
+  document.getElementById('slitSubtitle').textContent= isPure
+    ? `1 colonne = 1 pixel — ${sensorPx.toLocaleString()} colonnes`
+    : `Intervalle min. 1s — ${slit.colPx} px regroupés par colonne`;
+
+  document.getElementById('slitCalc').innerHTML =
+    `<b>${slit.totalPhotos.toLocaleString()} photos</b> — `+
+    `intervalle : <b>${fmtMs(slit.intervalSec)}</b><br>`+
+    (isPure
+      ? `<span class="info">✦ Slit-scan pur : 1 colonne = 1 px</span>`
+      : `<span class="info">✦ ${slit.colPx} px/colonne · ${slit.totalPhotos.toLocaleString()} colonnes</span>`)+
+    `<br>Durée totale : <b>${fmtSec(z)}</b>`;
+
+  updateSummary();
 }
 
-// ── normal sync ──
+// ── toggle slit ──
+function onSlitToggle(){
+  slitMode = document.getElementById('chkSlit').checked;
+  document.getElementById('slitCard').classList.toggle('gold-border', slitMode);
+
+  // show/hide manual Y + X
+  const mc = document.getElementById('manualControls');
+  mc.style.maxHeight = slitMode ? '0' : '300px';
+  mc.style.opacity   = slitMode ? '0' : '1';
+
+  if(slitMode) computeSlit();
+  else { mc.style.maxHeight='300px'; mc.style.opacity='1'; syncInputs(); }
+}
+
+// init manual controls visible state
+;(function(){
+  const mc=document.getElementById('manualControls');
+  mc.style.maxHeight='0'; mc.style.opacity='0'; // slit ON by default
+})();
+
+// ── normal mode sync ──
 function syncInputs(){
-  const y=cfg.y,x=cfg.x,z=y*x;
+  const y=cfg.y, x=cfg.x, z=y*x;
   document.getElementById('rY').value=clamp(y,4,120);
   document.getElementById('nY').value=y;
   document.getElementById('lY').textContent=y+' ph.';
@@ -336,7 +397,7 @@ function syncInputs(){
   document.getElementById('nX').value=Math.round(x);
   document.getElementById('lX').textContent=fmtSec(x);
   syncZ(z);
-  updateSummary(z);
+  updateSummary();
 }
 function syncZ(z){
   z=Math.round(z);
@@ -346,85 +407,124 @@ function syncZ(z){
   document.getElementById('nZs').value=z%60;
   document.getElementById('lZ').textContent=fmtSec(z);
 }
-function updateSummary(z){
-  const eff=effectiveOrient();
-  const dir=sweepDir==='ltr'?'→ gauche vers droite':'← droite vers gauche';
-  const cols=slitMode?`Slit-scan : <b>1 col = 1 px</b> — ${cfg.y.toLocaleString()} colonnes`
-                     :`<b>${cfg.y} colonnes</b> ${eff==='landscape'?'verticales':'horizontales'}`;
+function updateSummary(){
+  const z = slitMode ? cfg.y*cfg.x : cfg.y*cfg.x;
+  const eff = effectiveOrient();
+  const dir = sweepDir==='ltr'?'→ gauche vers droite':'← droite vers gauche';
+  let cols;
+  if(slitMode){
+    cols = slit.colPx===1
+      ? `Slit-scan pur : <b>1 col = 1 px</b> — ${cfg.y.toLocaleString()} colonnes`
+      : `Slit-scan : <b>${slit.colPx} px/col</b> — ${cfg.y.toLocaleString()} colonnes`;
+  } else {
+    cols = `<b>${cfg.y} colonnes</b> ${eff==='landscape'?'verticales':'horizontales'}`;
+  }
+  const zDisp = slitMode ? fmtSec(zTotal()) : fmtSec(cfg.y*cfg.x);
   document.getElementById('summary').innerHTML=
-    `<b>${cfg.y.toLocaleString()} photos</b> toutes les <b>${fmtMs(cfg.x)}</b><br>`+
-    `Durée : <b>${fmtSec(z)}</b> &nbsp;·&nbsp; ${cols}<br>`+
+    `<b>${cfg.y.toLocaleString()} photos</b> · intervalle <b>${fmtMs(cfg.x)}</b><br>`+
+    `Durée : <b>${zDisp}</b> · ${cols}<br>`+
     `<small>${dir}</small>`;
-  document.getElementById('lZ').textContent=fmtSec(z);
-  document.getElementById('btnStart').disabled=(!slitMode&&cfg.x<1)||cfg.y<2;
+  document.getElementById('btnStart').disabled = cfg.y<2 || cfg.x<=0;
 }
 
-// handlers
-function onYSlider(){cfg.y=+document.getElementById('rY').value;syncInputs();}
+function onYSlider(){cfg.y=+document.getElementById('rY').value; syncInputs();}
 function onYInput(){const v=parseInt(document.getElementById('nY').value);if(!v||v<2)return;cfg.y=v;syncInputs();}
-function onXSlider(){cfg.x=+document.getElementById('rX').value;syncInputs();}
+function onXSlider(){cfg.x=+document.getElementById('rX').value; syncInputs();}
 function onXInput(){const v=parseInt(document.getElementById('nX').value);if(!v||v<1)return;cfg.x=v;syncInputs();}
 function onZSlider(){
   const z=+document.getElementById('rZ').value;
-  if(slitMode){syncZ(z);computeSlit();return;}
+  syncZ(z);
+  if(slitMode){computeSlit();return;}
   cfg.x=Math.max(1,Math.round(z/cfg.y));
   document.getElementById('rX').value=clamp(cfg.x,1,3600);
   document.getElementById('nX').value=cfg.x;
   document.getElementById('lX').textContent=fmtSec(cfg.x);
-  syncZ(z);updateSummary(z);
+  updateSummary();
 }
 function onZInput(){
-  const z=zTotal();if(z<1)return;
-  if(slitMode){syncZ(z);computeSlit();return;}
+  const z=zTotal(); if(z<1)return;
+  document.getElementById('rZ').value=clamp(z,60,86400);
+  document.getElementById('lZ').textContent=fmtSec(z);
+  if(slitMode){computeSlit();return;}
   cfg.x=Math.max(1,Math.round(z/cfg.y));
   document.getElementById('rX').value=clamp(cfg.x,1,3600);
   document.getElementById('nX').value=cfg.x;
   document.getElementById('lX').textContent=fmtSec(cfg.x);
-  document.getElementById('rZ').value=clamp(z,60,86400);
-  document.getElementById('lZ').textContent=fmtSec(z);
-  updateSummary(z);
+  updateSummary();
 }
-syncInputs();
+
+// init
+computeSlit();
 
 // ── capture ──
 function colIndex(i,n){return sweepDir==='ltr'?i:n-1-i;}
-function sliceRect(ci,n,W,H,eff){
-  if(eff==='landscape'){const cw=slitMode?1:Math.floor(W/n);return{sx:ci*cw,sy:0,sw:cw,sh:H,dx:ci*cw,dy:0};}
-  else{const ch=slitMode?1:Math.floor(H/n);return{sx:0,sy:ci*ch,sw:W,sh:ch,dx:0,dy:ci*ch};}
+
+function sliceRect(ci, n, W, H, eff){
+  if(eff==='landscape'){
+    // colPx in slit mode, else floor(W/n)
+    const cw = slitMode ? slit.colPx : Math.floor(W/n);
+    const sx  = slitMode ? ci*cw : ci*cw;
+    return {sx, sy:0, sw:cw, sh:H, dx:sx, dy:0};
+  } else {
+    const ch = slitMode ? slit.colPx : Math.floor(H/n);
+    const sy  = ci*ch;
+    return {sx:0, sy, sw:W, sh:ch, dx:0, dy:sy};
+  }
 }
 
 async function startCapture(){
-  captureCount=0;videoFrameCanvases=[];
-  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:4096},height:{ideal:2160}},audio:false});}
-  catch(e){try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});}catch(e2){alert('Caméra inaccessible : '+e2.message);return;}}
+  captureCount=0; videoFrameCanvases=[];
+  const constraints={video:{facingMode:camFacing, width:{ideal:4096}, height:{ideal:2160}}, audio:false};
+  try{stream=await navigator.mediaDevices.getUserMedia(constraints);}
+  catch(e){
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:camFacing},audio:false});}
+    catch(e2){
+      try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});}
+      catch(e3){alert('Caméra inaccessible : '+e3.message);return;}
+    }
+  }
   const video=document.getElementById('video');
-  video.srcObject=stream;await new Promise(r=>video.onloadedmetadata=r);video.play();
-  const vw=video.videoWidth||1280,vh=video.videoHeight||720;
-  orientDetected=vw>=vh?'landscape':'portrait';updateOrientUI();
-  if(slitMode){const eff=effectiveOrient(),d=eff==='landscape'?vw:vh;if(d!==slitPx){slitPx=d;document.getElementById('nPx').value=d;computeSlit();}}
+  video.srcObject=stream; await new Promise(r=>video.onloadedmetadata=r); video.play();
+
+  const vw=video.videoWidth||1280, vh=video.videoHeight||720;
+  orientDetected=vw>=vh?'landscape':'portrait'; updateOrientUI();
+
+  // update sensorPx from real camera and recompute
+  if(slitMode){
+    const eff=effectiveOrient();
+    sensorPx = eff==='landscape' ? vw : vh;
+    computeSlit();
+  }
+
   showScreen('s-capture');
-  const z=cfg.y*cfg.x,eff=effectiveOrient();
+  const eff=effectiveOrient();
   document.getElementById('captureTitle').textContent=
-    slitMode?`Slit-scan ${eff} : ${cfg.y.toLocaleString()} px — ${fmtMs(cfg.x)}/col`
-            :`${cfg.y} photos × ${fmtSec(cfg.x)} = ${fmtSec(z)}`;
+    slitMode
+      ? `Slit-scan · ${cfg.y.toLocaleString()} colonnes · ${fmtMs(cfg.x)}/col`
+      : `${cfg.y} photos · ${fmtSec(cfg.x)}/photo · total ${fmtSec(cfg.y*cfg.x)}`;
+
   compositeCanvas=document.getElementById('previewCanvas');
-  compositeCanvas.width=vw;compositeCanvas.height=vh;
-  const ctx=compositeCanvas.getContext('2d');ctx.fillStyle='#111';ctx.fillRect(0,0,vw,vh);
-  isCapturing=true;runCapture();
+  compositeCanvas.width=vw; compositeCanvas.height=vh;
+  const ctx=compositeCanvas.getContext('2d');
+  ctx.fillStyle='#111'; ctx.fillRect(0,0,vw,vh);
+  isCapturing=true; runCapture();
 }
 
 function runCapture(){
   if(!isCapturing)return;
-  doCountdown(cfg.x,()=>{if(!isCapturing)return;captureFrame();
-    if(captureCount<cfg.y&&isCapturing)runCapture();
-    else if(captureCount>=cfg.y)finishCapture();});
+  doCountdown(cfg.x,()=>{
+    if(!isCapturing)return;
+    captureFrame();
+    if(captureCount<cfg.y&&isCapturing) runCapture();
+    else if(captureCount>=cfg.y) finishCapture();
+  });
 }
 function doCountdown(secs,cb){
   const el=document.getElementById('countdown');
-  const show=Math.min(Math.floor(secs),5),delay=Math.max(0,(secs-show)*1000);
+  const show=Math.min(Math.floor(secs),5), delay=Math.max(0,(secs-show)*1000);
   setTimeout(()=>{
-    if(!isCapturing){cb();return;}if(show<1){cb();return;}
-    let s=show;el.textContent=s;el.style.opacity='1';
+    if(!isCapturing){cb();return;} if(show<1){cb();return;}
+    let s=show; el.textContent=s; el.style.opacity='1';
     let iv=setInterval(()=>{
       if(!isCapturing){clearInterval(iv);el.style.opacity='0';cb();return;}
       if(--s<=0){clearInterval(iv);el.style.opacity='0';cb();}else el.textContent=s;
@@ -434,53 +534,70 @@ function doCountdown(secs,cb){
 function captureFrame(){
   if(!isCapturing)return;
   const video=document.getElementById('video');
-  const W=compositeCanvas.width,H=compositeCanvas.height,n=cfg.y,eff=effectiveOrient();
-  const ci=colIndex(captureCount,n),r=sliceRect(ci,n,W,H,eff);
-  const off=document.createElement('canvas');off.width=W;off.height=H;
-  const octx=off.getContext('2d');octx.drawImage(video,0,0,W,H);
+  const W=compositeCanvas.width, H=compositeCanvas.height;
+  const n=cfg.y, eff=effectiveOrient();
+  const ci=colIndex(captureCount,n);
+  const r=sliceRect(ci,n,W,H,eff);
+
+  const off=document.createElement('canvas'); off.width=W; off.height=H;
+  const octx=off.getContext('2d'); octx.drawImage(video,0,0,W,H);
   videoFrameCanvases.push(off);
   compositeCanvas.getContext('2d').putImageData(octx.getImageData(r.sx,r.sy,r.sw,r.sh),r.dx,r.dy);
+
   // sweep line
   const sl=document.getElementById('sweepLine');
-  if(eff==='landscape'){sl.style.cssText=`left:${(r.dx/W*100).toFixed(1)}%;top:0;width:2px;height:100%;opacity:1`;}
-  else{sl.style.cssText=`top:${(r.dy/H*100).toFixed(1)}%;left:0;width:100%;height:2px;opacity:1`;}
+  if(eff==='landscape') sl.style.cssText=`left:${(r.dx/W*100).toFixed(1)}%;top:0;width:2px;height:100%;opacity:1`;
+  else sl.style.cssText=`top:${(r.dy/H*100).toFixed(1)}%;left:0;width:100%;height:2px;opacity:1`;
   setTimeout(()=>sl.style.opacity='0',350);
+
   if(!slitMode){const fl=document.getElementById('flash');fl.style.opacity='.4';setTimeout(()=>fl.style.opacity='0',80);}
+
   captureCount++;
   document.getElementById('progressBar').style.width=(captureCount/n*100).toFixed(1)+'%';
   document.getElementById('captureInfo').textContent=
-    slitMode?`Colonne ${captureCount.toLocaleString()} / ${n.toLocaleString()} px`
+    slitMode?`Colonne ${captureCount.toLocaleString()} / ${n.toLocaleString()}`
             :`Photo ${captureCount} / ${n}`;
-  if(!slitMode)document.getElementById('statusMsg').textContent=
+  if(!slitMode) document.getElementById('statusMsg').textContent=
     captureCount<n?`Prochaine dans ${fmtSec(cfg.x)}…`:'Toutes les photos capturées !';
 }
+
 function stopCapture(){
-  isCapturing=false;stopStream();
-  if(captureCount>=2){cfg.y=captureCount;finishCapture();}
+  isCapturing=false; stopStream();
+  if(captureCount>=2){cfg.y=captureCount; finishCapture();}
   else{if(captureCount===1)alert('Une seule photo — impossible de composer.');restart();}
 }
 function finishCapture(){
-  isCapturing=false;stopStream();
-  const W=compositeCanvas.width,H=compositeCanvas.height,n=captureCount,eff=effectiveOrient();
-  const final=document.createElement('canvas');final.width=W;final.height=H;
+  isCapturing=false; stopStream();
+  const W=compositeCanvas.width, H=compositeCanvas.height;
+  const n=captureCount, eff=effectiveOrient();
+  const final=document.createElement('canvas'); final.width=W; final.height=H;
   const fctx=final.getContext('2d');
-  for(let i=0;i<n;i++){const r=sliceRect(colIndex(i,n),n,W,H,eff);fctx.putImageData(videoFrameCanvases[i].getContext('2d').getImageData(r.sx,r.sy,r.sw,r.sh),r.dx,r.dy);}
+  for(let i=0;i<n;i++){
+    const r=sliceRect(colIndex(i,n),n,W,H,eff);
+    fctx.putImageData(videoFrameCanvases[i].getContext('2d').getImageData(r.sx,r.sy,r.sw,r.sh),r.dx,r.dy);
+  }
   document.getElementById('resultImg').src=final.toDataURL('image/jpeg',.95);
+  const isPure=slitMode&&slit.colPx===1;
   document.getElementById('resultSub').textContent=
-    `${n}${slitMode?' px':''} colonnes · ${eff} · ${sweepDir==='ltr'?'→':'←'}`;
-  compositeCanvas=final;showScreen('s-result');
+    `${n.toLocaleString()} colonnes · ${eff} · ${sweepDir==='ltr'?'→':'←'}`+
+    (slitMode?(isPure?' · slit pur 1px':` · ${slit.colPx}px/col`):'');
+  compositeCanvas=final; showScreen('s-result');
 }
 function stopStream(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+
 function downloadComposite(){
-  const a=document.createElement('a');a.download='timelapse_'+(slitMode?'slitscan_':'composite_')+Date.now()+'.jpg';
-  a.href=compositeCanvas.toDataURL('image/jpeg',.95);a.click();
+  const a=document.createElement('a');
+  a.download='timelapse_'+(slitMode?'slitscan_':'composite_')+Date.now()+'.jpg';
+  a.href=compositeCanvas.toDataURL('image/jpeg',.95); a.click();
 }
 function exportVideo(){
   if(!videoFrameCanvases.length){alert('Aucune image.');return;}
-  const btn=document.getElementById('btnExportVideo');btn.disabled=true;btn.textContent='⏳ Création…';
+  const btn=document.getElementById('btnExportVideo'); btn.disabled=true; btn.textContent='⏳ Création…';
   const st=document.getElementById('statusMsg2');
-  const W=videoFrameCanvases[0].width,H=videoFrameCanvases[0].height,fps=slitMode?24:4;
-  const vc=document.createElement('canvas');vc.width=W;vc.height=H;const vctx=vc.getContext('2d');
+  const W=videoFrameCanvases[0].width, H=videoFrameCanvases[0].height;
+  const fps=slitMode?24:4;
+  const vc=document.createElement('canvas'); vc.width=W; vc.height=H;
+  const vctx=vc.getContext('2d');
   let mime='video/webm;codecs=vp9';
   if(!MediaRecorder.isTypeSupported(mime))mime='video/webm;codecs=vp8';
   if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
@@ -488,15 +605,15 @@ function exportVideo(){
   const chunks=[];
   mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   mr.onstop=()=>{
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type:mime}));
-    a.download='timelapse_'+(slitMode?'slitscan_':'')+Date.now()+'.webm';a.click();
-    btn.disabled=false;btn.textContent='🎞 Exporter le time lapse';st.textContent='✅ Vidéo téléchargée !';
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(chunks,{type:mime}));
+    a.download='timelapse_'+(slitMode?'slitscan_':'')+Date.now()+'.webm'; a.click();
+    btn.disabled=false; btn.textContent='🎞 Exporter le time lapse'; st.textContent='✅ Vidéo téléchargée !';
   };
-  mr.start();let fi=0;const hold=Math.round(1000/fps)*(slitMode?1:6);
-  (function nf(){if(fi>=videoFrameCanvases.length){mr.stop();return;}vctx.drawImage(videoFrameCanvases[fi],0,0);st.textContent=`Encodage ${++fi}/${videoFrameCanvases.length}…`;setTimeout(nf,hold);})();
+  mr.start(); let fi=0; const hold=Math.round(1000/fps)*(slitMode?1:6);
+  (function nf(){if(fi>=videoFrameCanvases.length){mr.stop();return;} vctx.drawImage(videoFrameCanvases[fi],0,0); st.textContent=`Encodage ${++fi}/${videoFrameCanvases.length}…`; setTimeout(nf,hold);})();
 }
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function restart(){stopStream();isCapturing=false;captureCount=0;videoFrameCanvases=[];showScreen('s-config');syncInputs();}
+function restart(){stopStream();isCapturing=false;captureCount=0;videoFrameCanvases=[];showScreen('s-config');computeSlit();}
 </script>
 </body>
 </html>
