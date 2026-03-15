@@ -1,0 +1,22 @@
+{
+  "name": "TimeLapse Slicer",
+  "short_name": "TL Slicer",
+  "description": "Composez le temps en une seule image",
+  "start_url": "/timelapse-slicer/",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0f0f0f",
+  "theme_color": "#00e5ff",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/0f0f0f/00e5ff?text=TL",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/0f0f0f/00e5ff?text=TL",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
